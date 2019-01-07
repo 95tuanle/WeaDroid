@@ -1,8 +1,13 @@
 package com.example.tuanle.weadroid;
 
+import android.Manifest;
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.zetterstrom.com.forecast.ForecastClient;
 import android.zetterstrom.com.forecast.ForecastConfiguration;
 import android.zetterstrom.com.forecast.models.Forecast;
@@ -19,8 +25,14 @@ import android.zetterstrom.com.forecast.models.Forecast;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.List;
 
@@ -59,11 +71,33 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         cityRepository.getAllCities().observe(this, new Observer<List<City>>() {
             @Override
-            public void onChanged(@Nullable List<City> cities) {
-                updateCitiesList(cities);
+            public void onChanged(@Nullable final List<City> cities) {
+                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
+                    fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+
+                            if (location != null) {
+                                System.out.println("CONCAC");
+                                cities.add(0, new City("Current Location", location.getLatitude(), location.getLongitude()));
+                                updateCitiesList(cities);
+                            } else {
+                                Toast.makeText(MainActivity.this, "Fetching location, please wait and try again", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    requestLocationPermission();
+                }
+
             }
         });
+    }
 
+    public void requestLocationPermission() {
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
     }
 
     private void updateCitiesList(final List<City> cities) {
@@ -95,12 +129,22 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         citiesList.setAdapter(arrayAdapter);
-//        citiesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                cityRepository.deleteCity(cities.get(position));
-//            }
-//        });
+        citiesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, CityWeatherConditionActivity.class);
+                intent.putExtra("city", cities.get(position));
+                startActivity(intent);
+            }
+        });
+
+        citiesList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                cityRepository.deleteCity(cities.get(position));
+                return false;
+            }
+        });
     }
 
     @Override
@@ -120,5 +164,10 @@ public class MainActivity extends AppCompatActivity {
                 // The user canceled the operation.
             }
         }
+    }
+
+    public void toMap(View view) {
+        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+        startActivity(intent);
     }
 }
