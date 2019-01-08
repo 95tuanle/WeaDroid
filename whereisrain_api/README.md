@@ -1,0 +1,2 @@
+- Change mongodb credencials
+- `sls deploy -s production` for aws lambda or `git push heroku master` for heroku
