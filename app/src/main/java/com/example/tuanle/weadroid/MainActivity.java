@@ -78,13 +78,10 @@ public class MainActivity extends AppCompatActivity {
                     fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
-
                             if (location != null) {
-                                System.out.println("CONCAC");
                                 cities.add(0, new City("Current Location", location.getLatitude(), location.getLongitude()));
-
                             } else {
-                                Toast.makeText(MainActivity.this, "Fetching location, please wait and try again", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Fetching location, please wait and try again to see your current location weather", Toast.LENGTH_SHORT).show();
                             }
                             updateCitiesList(cities);
                         }
