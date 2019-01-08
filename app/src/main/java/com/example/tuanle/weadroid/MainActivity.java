@@ -82,10 +82,11 @@ public class MainActivity extends AppCompatActivity {
                             if (location != null) {
                                 System.out.println("CONCAC");
                                 cities.add(0, new City("Current Location", location.getLatitude(), location.getLongitude()));
-                                updateCitiesList(cities);
+
                             } else {
                                 Toast.makeText(MainActivity.this, "Fetching location, please wait and try again", Toast.LENGTH_SHORT).show();
                             }
+                            updateCitiesList(cities);
                         }
                     });
                 } else {
