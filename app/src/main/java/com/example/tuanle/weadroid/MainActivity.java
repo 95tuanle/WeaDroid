@@ -29,9 +29,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.List;
@@ -112,11 +109,8 @@ public class MainActivity extends AppCompatActivity {
                         if (response.isSuccessful()) {
                             Forecast forecast = response.body();
                             text1.setText(forecast.getCurrently().getApparentTemperature().intValue() + "°F");
-                            System.out.println(forecast.getCurrently().getApparentTemperature());
-
                         }
                     }
-
                     @Override
                     public void onFailure(Call<Forecast> forecastCall, Throwable t) {
 

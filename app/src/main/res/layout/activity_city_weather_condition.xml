@@ -7,13 +7,6 @@
     android:orientation="vertical"
     tools:context=".CityWeatherConditionActivity">
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:id="@+id/img_view"
-        android:layout_gravity="center"
-        />
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

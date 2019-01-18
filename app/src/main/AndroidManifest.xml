@@ -25,7 +25,7 @@
         </activity>
         <activity android:name=".MapsActivity" />
         <activity android:name=".CityWeatherConditionActivity" />
-        <activity android:name=".AddCurrentLocationWeatherActivity" android:label="Add Current Location Weather"></activity>
+        <activity android:name=".ReportLocationWeatherActivity" android:label="Report Location Weather"></activity>
     </application>
 
 </manifest>

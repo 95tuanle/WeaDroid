@@ -88,7 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 public void onSuccess(Location location) {
                     if (location != null) {
-                        Intent intent = new Intent(MapsActivity.this, AddCurrentLocationWeatherActivity.class);
+                        Intent intent = new Intent(MapsActivity.this, ReportLocationWeatherActivity.class);
                         intent.putExtra("latitude", location.getLatitude());
                         intent.putExtra("longitude", location.getLongitude());
                         startActivity(intent);

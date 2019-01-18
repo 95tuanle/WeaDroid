@@ -3,7 +3,6 @@ package com.example.tuanle.weadroid;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.zetterstrom.com.forecast.ForecastClient;
 import android.zetterstrom.com.forecast.models.Forecast;
@@ -16,7 +15,6 @@ import retrofit2.Response;
 
 public class CityWeatherConditionActivity extends AppCompatActivity {
     TextView txtTemp;
-    ImageView imageView;
 
 
     @Override
@@ -32,7 +30,7 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
             public void onResponse(Call<Forecast> forecastCall, Response<Forecast> response) {
                 if (response.isSuccessful()) {
                     Forecast forecast = response.body();
-                    txtTemp.setText(forecast.getCurrently().getApparentTemperature().intValue() + "°F");
+                    txtTemp.setText(forecast.getCurrently().getApparentTemperature().intValue() + "°F 😭");
                 }
             }
             @Override
@@ -40,8 +38,6 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
 
             }
         });
-//    imageView = findViewById(R.id.img_view);
-//    imageView.setImageDrawable(R.drawable.ic);
     }
 
     @Override
