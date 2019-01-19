@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 if (cityRepository.findCityByName(place.getName().toString()) == null){
                     cityRepository.addCity(new City(place.getName().toString(), place.getLatLng().latitude, place.getLatLng().longitude));
                 }else {
-                    Toast.makeText(this, "City existed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "City is already existed!", Toast.LENGTH_SHORT).show();
                 }
                 Log.i("Success", "Place: " + place.getName());
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
