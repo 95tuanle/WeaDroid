@@ -145,7 +145,11 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
                 // TODO: Filter duplicate cities 🙃
-                cityRepository.addCity(new City(place.getName().toString(), place.getLatLng().latitude, place.getLatLng().longitude));
+                if (cityRepository.findCityByName(place.getName().toString()) == null){
+                    cityRepository.addCity(new City(place.getName().toString(), place.getLatLng().latitude, place.getLatLng().longitude));
+                }else {
+                    Toast.makeText(this, "City existed!", Toast.LENGTH_SHORT).show();
+                }
                 Log.i("Success", "Place: " + place.getName());
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
