@@ -144,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
-                // TODO: Filter duplicate cities 🙃
                 if (cityRepository.findCityByName(place.getName().toString()) == null){
                     cityRepository.addCity(new City(place.getName().toString(), place.getLatLng().latitude, place.getLatLng().longitude));
                 }else {
