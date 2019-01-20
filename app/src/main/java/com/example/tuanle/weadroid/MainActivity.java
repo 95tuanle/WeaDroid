@@ -2,7 +2,9 @@ package com.example.tuanle.weadroid;
 
 import android.Manifest;
 import android.arch.lifecycle.Observer;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -11,8 +13,12 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -25,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.zetterstrom.com.forecast.ForecastClient;
@@ -41,6 +48,8 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -49,14 +58,36 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int MAX_LIGHT = 40000;
+    public static final String MUSIC_PATH = "/sdcard/Music";
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
+            musicService = binder.getService();
+            musicService.setSongs(songs);
+            serviceConnected = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceConnected = false;
+        }
+    };
+    private MusicService musicService;
+    private boolean serviceConnected = false;
+    private ArrayList<Song> songs;
+
+
+
+
+
+    public static boolean DISPLAYING_CELSIUS = false;
+    public static final int MAX_LIGHT = 40000;
     private static final String DARK_SKY_API_KEY = "5528c7901c45cba63baa891e648c897e";
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     FloatingActionButton floatingActionButton;
     CityRepository cityRepository;
     ListView citiesList;
-    ViewGroup viewGroup;
-    public static boolean DISPLAYING_CELSIUS = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,28 +103,67 @@ public class MainActivity extends AppCompatActivity {
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         if (lightSensor != null) {
-//            sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_FASTEST);
+            sensorManager.registerListener(LightSensorListener, lightSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        }
+
+
+        requestPermission();
+        File musicFolder = new File(MUSIC_PATH);
+
+        songs = new ArrayList<>();
+        int id = 0;
+        if (musicFolder.exists()) {
+            File[] files = musicFolder.listFiles();
+            for (File file:
+                    files) {
+                Song newSong = new Song(++id, file.getName(), file.getPath());
+                songs.add(newSong);
+            }
+        }
+        if (serviceConnected) {
+            musicService.setSongs(songs);
+            musicService.playSong(0);
         }
     }
 
-//    @Override
-//    public void onSensorChanged(SensorEvent event) {
-//        if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-//            int grayShade = (int) event.values[0];
-//            viewGroup = findViewById(R.id.mainView);
-//            Drawable drawable;
-//            if (grayShade <MAX_LIGHT/15) {
-//                drawable = getDrawable(R.drawable.night);
-//                changeText(viewGroup, Color.WHITE);
-//            } else {
-//                drawable = getDrawable(R.drawable.day);
-//                changeText(viewGroup, Color.BLACK);
-//            }
-//            viewGroup.setBackground(drawable);
-//        }
-//    }
 
-    private void changeText(ViewGroup viewGroup, int color) {
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(MainActivity.this, MusicService.class);
+        bindService(intent, connection, this.BIND_AUTO_CREATE);
+        startService(intent);
+    }
+
+
+    private final SensorEventListener LightSensorListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+                int grayShade = (int) event.values[0];
+                ViewGroup viewGroup = findViewById(R.id.mainView);
+                if (grayShade < MAX_LIGHT/13) {
+                    viewGroup.setBackgroundColor(Color.BLACK);
+                    changeText(viewGroup, Color.WHITE);
+                } else {
+                    viewGroup.setBackgroundColor(Color.WHITE);
+                    changeText(viewGroup, Color.BLACK);
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
+
+
+    public static void changeText(ViewGroup viewGroup, int color) {
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
             View view = viewGroup.getChildAt(i);
             if (view instanceof TextView) {
@@ -109,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void addCity(View view) {
         try {
-            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN).build(this);
+            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).build(this);
             startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
         } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
             e.printStackTrace();
@@ -243,6 +313,7 @@ public class MainActivity extends AppCompatActivity {
             floatingActionButton.setImageBitmap(textAsBitmap("°F", 40, Color.WHITE));
         }
         reloadData();
+        musicService.playSong(0);
     }
 
     //method to convert your text to image (StackOverFlow)
@@ -260,5 +331,7 @@ public class MainActivity extends AppCompatActivity {
         canvas.drawText(text, 0, baseline, paint);
         return image;
     }
+
+
 
 }
