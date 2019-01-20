@@ -1,10 +1,19 @@
 package com.example.tuanle.weadroid;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +32,7 @@ public class UpdateLocationWeatherActivity extends AppCompatActivity {
     TextView latitudeText;
     TextView longitudeText;
     TextView idText;
-    RadioButton clearDay, clearNight, rain, snow, sleet, wind, fog, cloudy, partlyCloudyDay, partlyCloudyNight;
+    private RadioButton clearDay, clearNight, rain, snow, sleet, wind, fog, cloudy, partlyCloudyDay, partlyCloudyNight;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,8 +93,56 @@ public class UpdateLocationWeatherActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        if (lightSensor != null) {
+            sensorManager.registerListener(LightSensorListener, lightSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        }
     }
+
+    private final SensorEventListener LightSensorListener = new SensorEventListener() {
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+                int grayShade = (int) event.values[0];
+                ViewGroup viewGroup = findViewById(R.id.updateView);
+                if (grayShade < MainActivity.MAX_LIGHT/13) {
+                    clearDay.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
+                    clearNight.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
+                    rain.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
+                    snow.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
+                    sleet.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
+                    wind.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
+                    fog.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
+                    cloudy.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
+                    partlyCloudyDay.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
+                    partlyCloudyNight.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
+                    viewGroup.setBackgroundColor(Color.BLACK);
+                    MainActivity.changeText(viewGroup, Color.WHITE);
+                } else {
+                    clearDay.setButtonTintList(ColorStateList.valueOf(Color.BLACK));
+                    clearNight.setButtonTintList(ColorStateList.valueOf(Color.BLACK));
+                    rain.setButtonTintList(ColorStateList.valueOf(Color.BLACK));
+                    snow.setButtonTintList(ColorStateList.valueOf(Color.BLACK));
+                    sleet.setButtonTintList(ColorStateList.valueOf(Color.BLACK));
+                    wind.setButtonTintList(ColorStateList.valueOf(Color.BLACK));
+                    fog.setButtonTintList(ColorStateList.valueOf(Color.BLACK));
+                    cloudy.setButtonTintList(ColorStateList.valueOf(Color.BLACK));
+                    partlyCloudyDay.setButtonTintList(ColorStateList.valueOf(Color.BLACK));
+                    partlyCloudyNight.setButtonTintList(ColorStateList.valueOf(Color.BLACK));
+                    viewGroup.setBackgroundColor(Color.WHITE);
+                    MainActivity.changeText(viewGroup, Color.BLACK);
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         finish();

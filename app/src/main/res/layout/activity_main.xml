@@ -34,7 +34,7 @@
         android:clickable="true"
         android:focusable="true"
         android:onClick="toMap"
-        app:backgroundTint="@color/common_google_signin_btn_text_dark_focused"
+        app:backgroundTint="@android:color/holo_blue_dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/addCity"
         app:srcCompat="@android:drawable/ic_dialog_map" />
@@ -48,7 +48,7 @@
         android:clickable="true"
         android:focusable="true"
         android:onClick="changeDisplayTemperature"
-        app:backgroundTint="@color/common_google_signin_btn_text_dark_focused"
+        app:backgroundTint="@android:color/holo_blue_dark"
         app:layout_constraintBottom_toTopOf="@id/addCity"
         app:layout_constraintEnd_toEndOf="parent" />
 

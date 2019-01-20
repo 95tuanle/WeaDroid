@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.support.annotation.Nullable;
@@ -49,14 +50,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int MAX_LIGHT = 40000;
+    public static boolean DISPLAYING_CELSIUS = false;
+    public static final int MAX_LIGHT = 40000;
     private static final String DARK_SKY_API_KEY = "5528c7901c45cba63baa891e648c897e";
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     FloatingActionButton floatingActionButton;
     CityRepository cityRepository;
     ListView citiesList;
-    ViewGroup viewGroup;
-    public static boolean DISPLAYING_CELSIUS = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,28 +72,35 @@ public class MainActivity extends AppCompatActivity {
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         if (lightSensor != null) {
-//            sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_FASTEST);
+            sensorManager.registerListener(LightSensorListener, lightSensor, SensorManager.SENSOR_DELAY_FASTEST);
         }
     }
 
-//    @Override
-//    public void onSensorChanged(SensorEvent event) {
-//        if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-//            int grayShade = (int) event.values[0];
-//            viewGroup = findViewById(R.id.mainView);
-//            Drawable drawable;
-//            if (grayShade <MAX_LIGHT/15) {
-//                drawable = getDrawable(R.drawable.night);
-//                changeText(viewGroup, Color.WHITE);
-//            } else {
-//                drawable = getDrawable(R.drawable.day);
-//                changeText(viewGroup, Color.BLACK);
-//            }
-//            viewGroup.setBackground(drawable);
-//        }
-//    }
 
-    private void changeText(ViewGroup viewGroup, int color) {
+    private final SensorEventListener LightSensorListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+                int grayShade = (int) event.values[0];
+                ViewGroup viewGroup = findViewById(R.id.mainView);
+                if (grayShade < MAX_LIGHT/13) {
+                    viewGroup.setBackgroundColor(Color.BLACK);
+                    changeText(viewGroup, Color.WHITE);
+                } else {
+                    viewGroup.setBackgroundColor(Color.WHITE);
+                    changeText(viewGroup, Color.BLACK);
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
+
+
+    public static void changeText(ViewGroup viewGroup, int color) {
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
             View view = viewGroup.getChildAt(i);
             if (view instanceof TextView) {
@@ -109,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void addCity(View view) {
         try {
-            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN).build(this);
+            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).build(this);
             startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
         } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
             e.printStackTrace();
