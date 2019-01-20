@@ -8,6 +8,10 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.zetterstrom.com.forecast.ForecastClient;
 import android.zetterstrom.com.forecast.ForecastConfiguration;
+import android.zetterstrom.com.forecast.models.DataPoint;
 import android.zetterstrom.com.forecast.models.Forecast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -37,20 +42,21 @@ import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.List;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-
+    private static final int MAX_LIGHT = 40000;
     private static final String DARK_SKY_API_KEY = "5528c7901c45cba63baa891e648c897e";
-    public static final String WEATHER_REPORT_API = "https://whereisrain.herokuapp.com/rains";
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     FloatingActionButton floatingActionButton;
     CityRepository cityRepository;
     ListView citiesList;
-    public boolean DISPLAYING_CELCIUS = false;
+    ViewGroup viewGroup;
+    public static boolean DISPLAYING_CELSIUS = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +69,42 @@ public class MainActivity extends AppCompatActivity {
         floatingActionButton = findViewById(R.id.fab);
         floatingActionButton.setImageBitmap(textAsBitmap("°C", 40, Color.WHITE));
 
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        if (lightSensor != null) {
+//            sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        }
+    }
+
+//    @Override
+//    public void onSensorChanged(SensorEvent event) {
+//        if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+//            int grayShade = (int) event.values[0];
+//            viewGroup = findViewById(R.id.mainView);
+//            Drawable drawable;
+//            if (grayShade <MAX_LIGHT/15) {
+//                drawable = getDrawable(R.drawable.night);
+//                changeText(viewGroup, Color.WHITE);
+//            } else {
+//                drawable = getDrawable(R.drawable.day);
+//                changeText(viewGroup, Color.BLACK);
+//            }
+//            viewGroup.setBackground(drawable);
+//        }
+//    }
+
+    private void changeText(ViewGroup viewGroup, int color) {
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            View view = viewGroup.getChildAt(i);
+            if (view instanceof TextView) {
+                TextView textView = (TextView) view;
+                textView.setTextColor(color);
+            }
+            if (view instanceof ViewGroup) {
+                changeText((ViewGroup) view, color);
+            }
+
+        }
     }
 
     public void addCity(View view) {
@@ -123,10 +165,13 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<Forecast> forecastCall, Response<Forecast> response) {
                         if (response.isSuccessful()) {
                             Forecast forecast = response.body();
-                            if (DISPLAYING_CELCIUS) {
-                                text1.setText(toCelsius(forecast.getCurrently().getTemperature()) + "°C");
+                            DataPoint dataPoint = forecast.getCurrently();
+                            if (DISPLAYING_CELSIUS) {
+                                text1.setText(CityWeatherConditionActivity.returnEmoji(dataPoint.getIcon().getText())+ " " +
+                                        toCelsius(dataPoint.getTemperature()) + "°C");
                             } else {
-                                text1.setText(forecast.getCurrently().getTemperature().intValue() + "°F");
+                                text1.setText(CityWeatherConditionActivity.returnEmoji(dataPoint.getIcon().getText())+ " " +
+                                        dataPoint.getTemperature().intValue() + "°F");
                             }
                         }
                     }
@@ -158,10 +203,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private int toCelsius(Double temperature) {
+    public static int toCelsius(Double temperature) {
         return (int) (((temperature - 32)*5)/9);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -185,21 +229,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     public void toMap(View view) {
         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
         startActivity(intent);
     }
 
-
-
     public void changeDisplayTemperature(View view) {
-        if (DISPLAYING_CELCIUS) {
-            DISPLAYING_CELCIUS = false;
+        if (DISPLAYING_CELSIUS) {
+            DISPLAYING_CELSIUS = false;
             floatingActionButton.setImageBitmap(textAsBitmap("°C", 40, Color.WHITE));
         } else {
-            DISPLAYING_CELCIUS = true;
+            DISPLAYING_CELSIUS = true;
             floatingActionButton.setImageBitmap(textAsBitmap("°F", 40, Color.WHITE));
         }
         reloadData();

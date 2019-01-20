@@ -10,267 +10,305 @@
     <TextView
         android:id="@+id/txtTemp"
         android:layout_width="match_parent"
-        android:layout_height="98dp"
-        android:layout_marginTop="40dp"
+        android:layout_height="90dp"
         android:gravity="center"
         android:text=""
         android:textSize="36sp"
         android:textStyle="bold" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:paddingLeft="50dip"
-        android:layout_height="259dp">
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center">
 
-        <LinearLayout
+        <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/txtToday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/iconToday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/txtToday"
-                        android:gravity="left"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/tempToday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/iconToday"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+        </TableRow>
 
-                    <TextView
-                        android:id="@+id/tempToday"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-                </TableRow>
+            <TextView
+                android:id="@+id/txtDay1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/iconDay1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/txtDay1"
-                        android:gravity="left"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/tempDay1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/iconDay1"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+        </TableRow>
 
-                    <TextView
-                        android:id="@+id/tempDay1"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-                </TableRow>
+            <TextView
+                android:id="@+id/txtDay2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/iconDay2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/txtDay2"
-                        android:gravity="left"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
-
-                    <TextView
-                        android:id="@+id/iconDay2"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
-
-                    <TextView
-                        android:id="@+id/tempDay2"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
-                </TableRow>
+            <TextView
+                android:id="@+id/tempDay2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
+        </TableRow>
 
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/txtDay3"
-                        android:gravity="left"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/txtDay3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/iconDay3"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/iconDay3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp"
+                 />
 
-                    <TextView
-                        android:id="@+id/tempDay3"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/tempDay3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                </TableRow>
+        </TableRow>
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/txtDay4"
-                        android:gravity="left"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/txtDay4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/iconDay4"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/iconDay4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/tempDay4"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/tempDay4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                </TableRow>
+        </TableRow>
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/txtDay5"
-                        android:gravity="left"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/txtDay5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/iconDay5"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/iconDay5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/tempDay5"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/tempDay5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                </TableRow>
+        </TableRow>
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/txtDay6"
-                        android:gravity="left"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/txtDay6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/iconDay6"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/iconDay6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/tempDay6"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/tempDay6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                </TableRow>
+        </TableRow>
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/txtDay7"
-                        android:gravity="left"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/txtDay7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/iconDay7"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/iconDay7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                    <TextView
-                        android:id="@+id/tempDay7"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:text="TextView" />
+            <TextView
+                android:id="@+id/tempDay7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingLeft="40dp"
+                android:paddingTop="3dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="3dp" />
 
-                </TableRow>
-            </TableLayout>
-        </LinearLayout>
-    </ScrollView>
+        </TableRow>
+    </TableLayout>
+
 </LinearLayout>

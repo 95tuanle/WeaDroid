@@ -54,6 +54,7 @@
         android:clickable="true"
         android:focusable="true"
         android:onClick="finish"
-        android:src="@drawable/cast_abc_scrubber_control_off_mtrl_alpha" />
+        android:src="@drawable/back"
+        map:backgroundTint="@color/common_google_signin_btn_text_dark_default"/>
 
 </RelativeLayout>

@@ -4,19 +4,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.zetterstrom.com.forecast.ForecastClient;
 import android.zetterstrom.com.forecast.models.DataPoint;
 import android.zetterstrom.com.forecast.models.Forecast;
 
-import org.w3c.dom.Text;
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -28,9 +22,6 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
     TextView txtToday, txtDay1, txtDay2, txtDay3, txtDay4, txtDay5, txtDay6, txtDay7;
     TextView iconToday, iconDay1, iconDay2, iconDay3, iconDay4, iconDay5, iconDay6, iconDay7;
     TextView tempToday, tempDay1, tempDay2, tempDay3, tempDay4, tempDay5, tempDay6, tempDay7;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +66,14 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
             public void onResponse(Call<Forecast> forecastCall, Response<Forecast> response) {
                 if (response.isSuccessful()) {
                     Forecast forecast = response.body();
-                    txtTemp.setText(forecast.getCurrently().getApparentTemperature().intValue() + "°F");
+                    if (MainActivity.DISPLAYING_CELSIUS) {
+                        txtTemp.setText(MainActivity.toCelsius(forecast.getCurrently().getTemperature()) + "°C");
+                    } else {
+                        txtTemp.setText(forecast.getCurrently().getTemperature().intValue() + "°F");
+                    }
                     ArrayList<DataPoint> dataPoints = forecast.getDaily().getDataPoints();
                     SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+
                     String today = sdf.format(dataPoints.get(0).getTime());
                     String day1 = sdf.format(dataPoints.get(1).getTime());
                     String day2 = sdf.format(dataPoints.get(2).getTime());
@@ -105,8 +101,25 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
                     iconDay6.setText(returnEmoji(dataPoints.get(6).getIcon().getText()));
                     iconDay7.setText(returnEmoji(dataPoints.get(7).getIcon().getText()));
 
-                    tempToday.setText(dataPoints.get(0).getTemperatureHigh().toString() + "   " + dataPoints.get(0).getTemperatureLow().toString());
-
+                    if (MainActivity.DISPLAYING_CELSIUS) {
+                        tempToday.setText(MainActivity.toCelsius(dataPoints.get(0).getTemperatureHigh()) + "   " + MainActivity.toCelsius(dataPoints.get(0).getTemperatureLow()));
+                        tempDay1.setText(MainActivity.toCelsius(dataPoints.get(1).getTemperatureHigh()) + "   " + MainActivity.toCelsius(dataPoints.get(1).getTemperatureLow()));
+                        tempDay2.setText(MainActivity.toCelsius(dataPoints.get(2).getTemperatureHigh()) + "   " + MainActivity.toCelsius(dataPoints.get(2).getTemperatureLow()));
+                        tempDay3.setText(MainActivity.toCelsius(dataPoints.get(3).getTemperatureHigh()) + "   " + MainActivity.toCelsius(dataPoints.get(3).getTemperatureLow()));
+                        tempDay4.setText(MainActivity.toCelsius(dataPoints.get(4).getTemperatureHigh()) + "   " + MainActivity.toCelsius(dataPoints.get(4).getTemperatureLow()));
+                        tempDay5.setText(MainActivity.toCelsius(dataPoints.get(5).getTemperatureHigh()) + "   " + MainActivity.toCelsius(dataPoints.get(5).getTemperatureLow()));
+                        tempDay6.setText(MainActivity.toCelsius(dataPoints.get(6).getTemperatureHigh()) + "   " + MainActivity.toCelsius(dataPoints.get(6).getTemperatureLow()));
+                        tempDay7.setText(MainActivity.toCelsius(dataPoints.get(7).getTemperatureHigh()) + "   " + MainActivity.toCelsius(dataPoints.get(7).getTemperatureLow()));
+                    } else {
+                        tempToday.setText(dataPoints.get(0).getTemperatureHigh().intValue() + "   " + dataPoints.get(0).getTemperatureLow().intValue());
+                        tempDay1.setText(dataPoints.get(1).getTemperatureHigh().intValue() + "   " + dataPoints.get(1).getTemperatureLow().intValue());
+                        tempDay2.setText(dataPoints.get(2).getTemperatureHigh().intValue() + "   " + dataPoints.get(2).getTemperatureLow().intValue());
+                        tempDay3.setText(dataPoints.get(3).getTemperatureHigh().intValue() + "   " + dataPoints.get(3).getTemperatureLow().intValue());
+                        tempDay4.setText(dataPoints.get(4).getTemperatureHigh().intValue() + "   " + dataPoints.get(4).getTemperatureLow().intValue());
+                        tempDay5.setText(dataPoints.get(5).getTemperatureHigh().intValue() + "   " + dataPoints.get(5).getTemperatureLow().intValue());
+                        tempDay6.setText(dataPoints.get(6).getTemperatureHigh().intValue() + "   " + dataPoints.get(6).getTemperatureLow().intValue());
+                        tempDay7.setText(dataPoints.get(7).getTemperatureHigh().intValue() + "   " + dataPoints.get(7).getTemperatureLow().intValue());
+                    }
                 }
             }
             @Override
@@ -116,32 +129,32 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
         });
     }
 
-    private String returnEmoji(String toString) {
-        String emo ="";
-        if (toString.equals("clear-day")) {
-            emo = "☀️";
-        }else if (toString.equals("clear-night")){
-            emo = "🌙";
-        }else if (toString.equals("rain")){
-            emo = "☔️";
-        }else if (toString.equals("snow")){
-            emo = "❄️";
-        }else if (toString.equals("sleet")){
-            emo = "🌨";
-        }else if (toString.equals("wind")){
-            emo = "🌬";
-        }else if (toString.equals("fog")){
-            emo = "🌫";
-        }else if (toString.equals("cloudy")){
-            emo = "☁️";
-        }else if (toString.equals("partly-cloudy-day")){
-            emo = "🌤";
-        }else if (toString.equals("partly-cloudy-night")){
-            emo = "🌥";
+    public static String returnEmoji(String iconString) {
+        String emoji;
+        if (iconString.equals("clear-day")) {
+            emoji = "☀️";
+        }else if (iconString.equals("clear-night")){
+            emoji = "🌙";
+        }else if (iconString.equals("rain")){
+            emoji = "☔️";
+        }else if (iconString.equals("snow")){
+            emoji = "❄️";
+        }else if (iconString.equals("sleet")){
+            emoji = "🌨";
+        }else if (iconString.equals("wind")){
+            emoji = "🌬";
+        }else if (iconString.equals("fog")){
+            emoji = "🌫";
+        }else if (iconString.equals("cloudy")){
+            emoji = "☁️";
+        }else if (iconString.equals("partly-cloudy-day")){
+            emoji = "🌤";
+        }else if (iconString.equals("partly-cloudy-night")){
+            emoji = "🌥";
         }else {
-            emo = "error";
+            emoji = "error";
         }
-        return emo;
+        return emoji;
 
     }
 
@@ -149,5 +162,8 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         finish();
         return super.onOptionsItemSelected(item);
+    }
+
+    public void changeDisplayTemperature(View view) {
     }
 }
