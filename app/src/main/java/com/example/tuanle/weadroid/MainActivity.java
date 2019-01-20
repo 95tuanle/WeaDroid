@@ -40,6 +40,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private static final String DARK_SKY_API_KEY = "5528c7901c45cba63baa891e648c897e";
+    public static final String WEATHER_REPORT_API = "https://whereisrain.herokuapp.com/rains";
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     CityRepository cityRepository;
     ListView citiesList;

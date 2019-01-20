@@ -2,8 +2,6 @@ package com.example.tuanle.weadroid;
 
 import android.util.Log;
 
-import com.google.android.gms.common.api.Response;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,17 +17,16 @@ import java.net.URL;
 import static android.content.ContentValues.TAG;
 
 public class HttpHandler {
+    static String status;
 
     //Read request
     public static String getRequest(String urlStr){
-        //urlStr = address ie: localhost:8000
-
         StringBuilder builder = new StringBuilder();
         try {
             URL url = new URL(urlStr);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line = "";
+            String line;
             while ((line = reader.readLine())!=null){ //while line is not empty
                 builder.append(line);
             }
@@ -42,29 +39,22 @@ public class HttpHandler {
     }
 
     //Create method
-    public static String postRain(String urlStr, Rain rain){
-        String status = "";
-
+    public static String postRequest(String urlStr, Condition condition){
         try {
-            //Connect
             URL url = new URL(urlStr);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Accept", "application/json");
-
-            //Prepare json object
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("latitude", rain.latitude);
-            jsonObject.put("longitude", rain.longitude);
-            jsonObject.put("condition", rain.condition);
-            jsonObject.put("time", rain.time);
-
-            //Write data
-            DataOutputStream outputStream = new DataOutputStream(conn.getOutputStream());
-            outputStream.writeBytes(jsonObject.toString());
-            outputStream.flush();
-            outputStream.close();
+            jsonObject.put("latitude", condition.latitude);
+            jsonObject.put("longitude", condition.longitude);
+            jsonObject.put("condition", condition.condition);
+            jsonObject.put("time", condition.time);
+            DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+            os.writeBytes(jsonObject.toString());
+            os.flush();
+            os.close();
             status = conn.getResponseCode() + ": " + conn.getResponseMessage();
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -77,27 +67,22 @@ public class HttpHandler {
     }
 
     //Update method
-    public static String editRain(String urlStr, Rain rain){
-        String status = "";
+    public static String putRequest(String urlStr, Condition condition, String id){
         try {
-            URL url = new URL(urlStr);
-            HttpURLConnection conn = (HttpURLConnection)
-                    url.openConnection();
+            URL url = new URL(urlStr + "/" + id);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("PUT");
             conn.setRequestProperty("Content-Type","application/json");
-
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("latitude", rain.latitude);
-            jsonObject.put("longitude", rain.longitude);
-            jsonObject.put("condition", rain.condition);
-            jsonObject.put("time", rain.time);
-
+            jsonObject.put("latitude", condition.latitude);
+            jsonObject.put("longitude", condition.longitude);
+            jsonObject.put("condition", condition.condition);
+            jsonObject.put("time", condition.time);
             DataOutputStream os = new DataOutputStream(conn.getOutputStream());
             os.writeBytes(jsonObject.toString());
             os.flush();
-            status = conn.getResponseCode() + ": " + conn.getResponseMessage();
             os.close();
-
+            status = conn.getResponseCode() + ": " + conn.getResponseMessage();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -109,13 +94,10 @@ public class HttpHandler {
     }
 
     //Delete method
-    public static String deleteRequest(String urlStr){
-        String status = "";
+    public static String deleteRequest(String urlStr, String id){
         try{
-            URL url = new URL(urlStr);
-            Log.d(TAG, "DeleteClinicRequest: " + urlStr);
-            HttpURLConnection conn = (HttpURLConnection)
-                    url.openConnection();
+            URL url = new URL(urlStr + "/" + id);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("DELETE");
             conn.setRequestProperty("Content-Type","application/json");
             status = conn.getResponseCode() + ": " + conn.getResponseMessage();

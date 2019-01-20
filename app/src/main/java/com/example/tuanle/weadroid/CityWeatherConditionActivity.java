@@ -30,7 +30,7 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
             public void onResponse(Call<Forecast> forecastCall, Response<Forecast> response) {
                 if (response.isSuccessful()) {
                     Forecast forecast = response.body();
-                    txtTemp.setText(forecast.getCurrently().getApparentTemperature().intValue() + "°F 😭");
+                    txtTemp.setText(forecast.getCurrently().getApparentTemperature().intValue() + "°F");
                 }
             }
             @Override
