@@ -18,7 +18,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CityWeatherConditionActivity extends AppCompatActivity {
-    TextView txtTemp;
+    TextView txtTemp, txtSumary, txtSunriseTime, txtSunsetTime, txtChanceOfRain, txtHumidity, txtWind, txtFeelsLike;
     TextView txtToday, txtDay1, txtDay2, txtDay3, txtDay4, txtDay5, txtDay6, txtDay7;
     TextView iconToday, iconDay1, iconDay2, iconDay3, iconDay4, iconDay5, iconDay6, iconDay7;
     TextView tempToday, tempDay1, tempDay2, tempDay3, tempDay4, tempDay5, tempDay6, tempDay7;
@@ -28,9 +28,17 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_city_weather_condition);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        City city = (City) getIntent().getSerializableExtra("city");
+        final City city = (City) getIntent().getSerializableExtra("city");
         setTitle(city.getName());
         txtTemp = findViewById(R.id.txtTemp);
+        txtSumary = findViewById(R.id.txtSumary);
+        txtSunriseTime = findViewById(R.id.txtSunriseTime);
+        txtSunsetTime = findViewById(R.id.txtSunsetTime);
+        txtChanceOfRain = findViewById(R.id.txtChanceOfRain);
+        txtHumidity = findViewById(R.id.txtHumidity);
+        txtWind = findViewById(R.id.txtWind);
+        txtFeelsLike = findViewById(R.id.txtFeelsLike);
+        //Date column
         txtToday = findViewById(R.id.txtToday);
         txtDay1 = findViewById(R.id.txtDay1);
         txtDay2 = findViewById(R.id.txtDay2);
@@ -68,11 +76,20 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
                     Forecast forecast = response.body();
                     if (MainActivity.DISPLAYING_CELSIUS) {
                         txtTemp.setText(MainActivity.toCelsius(forecast.getCurrently().getTemperature()) + "°C");
+                        txtFeelsLike.setText("Feels like\n"+MainActivity.toCelsius(forecast.getCurrently().getApparentTemperature()) + "°C");
                     } else {
                         txtTemp.setText(forecast.getCurrently().getTemperature().intValue() + "°F");
+                        txtFeelsLike.setText("Feels like\n"+forecast.getCurrently().getApparentTemperature().intValue() + "°F");
+
                     }
+                    ArrayList<DataPoint> hourlyDataPoints = forecast.getHourly().getDataPoints();
+
                     ArrayList<DataPoint> dataPoints = forecast.getDaily().getDataPoints();
                     SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+                    SimpleDateFormat sdfTime = new SimpleDateFormat("H:mm");
+                    String sunriseTime = sdfTime.format(dataPoints.get(0).getSunriseTime());
+                    String sunsetTime = sdfTime.format(dataPoints.get(0).getSunsetTime());
+
 
                     String today = sdf.format(dataPoints.get(0).getTime());
                     String day1 = sdf.format(dataPoints.get(1).getTime());
@@ -82,6 +99,8 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
                     String day5 = sdf.format(dataPoints.get(5).getTime());
                     String day6 = sdf.format(dataPoints.get(6).getTime());
                     String day7 = sdf.format(dataPoints.get(7).getTime());
+
+
 
                     txtToday.setText(today);
                     txtDay1.setText(day1);
@@ -120,6 +139,14 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
                         tempDay6.setText(dataPoints.get(6).getTemperatureHigh().intValue() + "   " + dataPoints.get(6).getTemperatureLow().intValue());
                         tempDay7.setText(dataPoints.get(7).getTemperatureHigh().intValue() + "   " + dataPoints.get(7).getTemperatureLow().intValue());
                     }
+                    txtSumary.setText(forecast.getDaily().getSummary());
+                    //bottom textviews
+                    txtSunriseTime.setText("Sunrise\n"+sunriseTime);
+                    txtSunsetTime.setText("Sunset\n"+sunsetTime);
+                    txtChanceOfRain.setText("Chance of rain\n"+ Integer.valueOf((int) (forecast.getCurrently().getPrecipProbability()*100))+"%");
+                    txtHumidity.setText("Humidity\n"+ Integer.valueOf((int) (forecast.getCurrently().getHumidity()*100))+"%");
+                    txtWind.setText("Wind\n"+ forecast.getCurrently().getWindSpeed()+" m/s");
+
                 }
             }
             @Override
