@@ -10,15 +10,12 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -31,7 +28,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.zetterstrom.com.forecast.ForecastClient;
@@ -51,7 +47,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -90,21 +85,29 @@ public class MainActivity extends AppCompatActivity {
 
 
         requestPermission();
-        File musicFolder = new File(MUSIC_PATH);
-
-        songs = new ArrayList<>();
-        int id = 0;
-        if (musicFolder.exists()) {
-            File[] files = musicFolder.listFiles();
-            for (File file:
-                    files) {
-                Song newSong = new Song(++id, file.getName(), file.getPath());
-                songs.add(newSong);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            File musicFolder = new File(MUSIC_PATH);
+            songs = new ArrayList<>();
+            int id = 0;
+            if (musicFolder.exists()) {
+                File[] files = musicFolder.listFiles();
+                if (files != null) {
+                    for (File file:
+                            files) {
+                        Song newSong = new Song(++id, file.getName(), file.getPath());
+                        songs.add(newSong);
+                    }
+                }
             }
+            if (serviceConnected) {
+                musicService.setSongs(songs);
+            }
+        } else {
+            requestPermission();
         }
-        if (serviceConnected) {
-            musicService.setSongs(songs);
-        }
+
     }
 
 
@@ -309,7 +312,6 @@ public class MainActivity extends AppCompatActivity {
             floatingActionButton.setImageBitmap(textAsBitmap("°F", 40, Color.WHITE));
         }
         reloadData();
-        musicService.playSong(0);
     }
 
     //method to convert your text to image (StackOverFlow)

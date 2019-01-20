@@ -2,7 +2,6 @@ package com.example.tuanle.weadroid;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.zetterstrom.com.forecast.models.Forecast;
 
 import java.io.Serializable;
 

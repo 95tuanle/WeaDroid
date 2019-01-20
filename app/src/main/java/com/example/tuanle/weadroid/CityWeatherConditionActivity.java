@@ -1,5 +1,7 @@
 package com.example.tuanle.weadroid;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -7,6 +9,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -16,7 +20,6 @@ import android.widget.TextView;
 import android.zetterstrom.com.forecast.ForecastClient;
 import android.zetterstrom.com.forecast.models.DataPoint;
 import android.zetterstrom.com.forecast.models.Forecast;
-import android.zetterstrom.com.forecast.models.Icon;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -83,6 +86,33 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
             public void onResponse(Call<Forecast> forecastCall, Response<Forecast> response) {
                 if (response.isSuccessful()) {
                     Forecast forecast = response.body();
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        MainActivity.musicService.playSong(getSongPosition(forecast.getCurrently().getIcon().getText()));
+
+                    }else {
+                        ActivityCompat.requestPermissions(CityWeatherConditionActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+
+                    }
+
+                    //looping for horiental Scrolling
+                    int[] hourId = new int[] {R.id.txtHour0, R.id.txtHour1,R.id.txtHour2, R.id.txtHour3,R.id.txtHour4,
+                            R.id.txtHour5,R.id.txtHour6, R.id.txtHour7,R.id.txtHour8, R.id.txtHour9,
+                            R.id.txtHour10,R.id.txtHour11, R.id.txtHour12,R.id.txtHour13, R.id.txtHour14,
+                            R.id.txtHour15,R.id.txtHour16, R.id.txtHour17,R.id.txtHour18, R.id.txtHour19,
+                            R.id.txtHour20,R.id.txtHour21, R.id.txtHour22,R.id.txtHour23, R.id.txtHour24};
+                    for (int i = 0; i<hourId.length; i++){
+                        TextView y = findViewById(hourId[i]);
+                        SimpleDateFormat sdfTime = new SimpleDateFormat("H");
+                        String time = sdfTime.format(forecast.getHourly().getDataPoints().get(i).getTime());
+                        if (Integer.parseInt(time) <=12){
+                            time += "AM";
+                        }else {
+                            time += "PM";
+                        }
+                        y.setText(time+"\n"+returnEmoji(forecast.getHourly().getDataPoints().get(i).getIcon().getText()));
+                    }
                     if (MainActivity.DISPLAYING_CELSIUS) {
                         txtTemp.setText(MainActivity.toCelsius(forecast.getCurrently().getTemperature()) + "°C");
                         txtFeelsLike.setText("Feels like\n"+MainActivity.toCelsius(forecast.getCurrently().getApparentTemperature()) + "°C");
@@ -91,8 +121,6 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
                         txtFeelsLike.setText("Feels like\n"+forecast.getCurrently().getApparentTemperature().intValue() + "°F");
 
                     }
-                    MainActivity.musicService.playSong(getSongPosition(forecast.getCurrently().getIcon().getText()));
-
                     ArrayList<DataPoint> hourlyDataPoints = forecast.getHourly().getDataPoints();
 
                     ArrayList<DataPoint> dataPoints = forecast.getDaily().getDataPoints();
