@@ -59,27 +59,9 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     public static final String MUSIC_PATH = "/sdcard/Music";
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
-            musicService = binder.getService();
-            musicService.setSongs(songs);
-            serviceConnected = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            serviceConnected = false;
-        }
-    };
-    private MusicService musicService;
+    public static MusicService musicService;
     private boolean serviceConnected = false;
     private ArrayList<Song> songs;
-
-
-
-
 
     public static boolean DISPLAYING_CELSIUS = false;
     public static final int MAX_LIGHT = 40000;
@@ -122,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
         }
         if (serviceConnected) {
             musicService.setSongs(songs);
-            musicService.playSong(0);
         }
     }
 
@@ -130,6 +111,21 @@ public class MainActivity extends AppCompatActivity {
     private void requestPermission() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
     }
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
+            musicService = binder.getService();
+            musicService.setSongs(songs);
+            serviceConnected = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceConnected = false;
+        }
+    };
 
     @Override
     protected void onStart() {

@@ -1,13 +1,22 @@
 package com.example.tuanle.weadroid;
 
+import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.zetterstrom.com.forecast.ForecastClient;
 import android.zetterstrom.com.forecast.models.DataPoint;
 import android.zetterstrom.com.forecast.models.Forecast;
+import android.zetterstrom.com.forecast.models.Icon;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,7 +27,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CityWeatherConditionActivity extends AppCompatActivity {
-    TextView txtTemp, txtSumary, txtSunriseTime, txtSunsetTime, txtChanceOfRain, txtHumidity, txtWind, txtFeelsLike;
+    TextView txtTemp, txtSummary, txtSunriseTime, txtSunsetTime, txtChanceOfRain, txtHumidity, txtWind, txtFeelsLike;
     TextView txtToday, txtDay1, txtDay2, txtDay3, txtDay4, txtDay5, txtDay6, txtDay7;
     TextView iconToday, iconDay1, iconDay2, iconDay3, iconDay4, iconDay5, iconDay6, iconDay7;
     TextView tempToday, tempDay1, tempDay2, tempDay3, tempDay4, tempDay5, tempDay6, tempDay7;
@@ -31,7 +40,7 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
         final City city = (City) getIntent().getSerializableExtra("city");
         setTitle(city.getName());
         txtTemp = findViewById(R.id.txtTemp);
-        txtSumary = findViewById(R.id.txtSumary);
+        txtSummary = findViewById(R.id.txtSumary);
         txtSunriseTime = findViewById(R.id.txtSunriseTime);
         txtSunsetTime = findViewById(R.id.txtSunsetTime);
         txtChanceOfRain = findViewById(R.id.txtChanceOfRain);
@@ -82,6 +91,8 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
                         txtFeelsLike.setText("Feels like\n"+forecast.getCurrently().getApparentTemperature().intValue() + "°F");
 
                     }
+                    MainActivity.musicService.playSong(getSongPosition(forecast.getCurrently().getIcon().getText()));
+
                     ArrayList<DataPoint> hourlyDataPoints = forecast.getHourly().getDataPoints();
 
                     ArrayList<DataPoint> dataPoints = forecast.getDaily().getDataPoints();
@@ -139,7 +150,7 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
                         tempDay6.setText(dataPoints.get(6).getTemperatureHigh().intValue() + "   " + dataPoints.get(6).getTemperatureLow().intValue());
                         tempDay7.setText(dataPoints.get(7).getTemperatureHigh().intValue() + "   " + dataPoints.get(7).getTemperatureLow().intValue());
                     }
-                    txtSumary.setText(forecast.getDaily().getSummary());
+                    txtSummary.setText(forecast.getDaily().getSummary());
                     //bottom textviews
                     txtSunriseTime.setText("Sunrise\n"+sunriseTime);
                     txtSunsetTime.setText("Sunset\n"+sunsetTime);
@@ -154,7 +165,71 @@ public class CityWeatherConditionActivity extends AppCompatActivity {
 
             }
         });
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        if (lightSensor != null) {
+            sensorManager.registerListener(LightSensorListener, lightSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        }
     }
+
+    private int getSongPosition(String iconString) {
+        int position;
+        if (iconString.equals("clear-day")) {
+            position = 0;
+        }else if (iconString.equals("clear-night")){
+            position = 1;
+        }else if (iconString.equals("rain")){
+            position = 2;
+        }else if (iconString.equals("snow")){
+            position = 3;
+        }else if (iconString.equals("sleet")){
+            position = 4;
+        }else if (iconString.equals("wind")){
+            position = 5;
+        }else if (iconString.equals("fog")){
+            position = 6;
+        }else if (iconString.equals("cloudy")){
+            position = 7;
+        }else if (iconString.equals("partly-cloudy-day")){
+            position = 8;
+        }else if (iconString.equals("partly-cloudy-night")){
+            position = 9;
+        }else {
+            position = -1;
+        }
+        return position;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MainActivity.musicService.stopSong();
+    }
+
+    private final SensorEventListener LightSensorListener = new SensorEventListener() {
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+                int grayShade = (int) event.values[0];
+                ViewGroup viewGroup = findViewById(R.id.detailView);
+                if (grayShade < MainActivity.MAX_LIGHT/13) {
+
+                    viewGroup.setBackgroundColor(Color.BLACK);
+                    MainActivity.changeText(viewGroup, Color.WHITE);
+                } else {
+
+                    viewGroup.setBackgroundColor(Color.WHITE);
+                    MainActivity.changeText(viewGroup, Color.BLACK);
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
 
     public static String returnEmoji(String iconString) {
         String emoji;
