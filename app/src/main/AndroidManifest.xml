@@ -12,6 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".UpdateLocationWeatherActivity" android:label="Update Location Weather"></activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBHUvx9-03JlROSN8ZOepBZfFecn20chyY" />
@@ -25,7 +27,9 @@
         </activity>
         <activity android:name=".MapsActivity" />
         <activity android:name=".CityWeatherConditionActivity" />
-        <activity android:name=".ReportLocationWeatherActivity" android:label="Report Location Weather"></activity>
+        <activity
+            android:name=".ReportLocationWeatherActivity"
+            android:label="Report Location Weather" />
     </application>
 
 </manifest>

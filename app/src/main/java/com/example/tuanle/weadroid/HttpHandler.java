@@ -99,7 +99,6 @@ public class HttpHandler {
             URL url = new URL(urlStr + "/" + id);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("DELETE");
-            conn.setRequestProperty("Content-Type","application/json");
             status = conn.getResponseCode() + ": " + conn.getResponseMessage();
         } catch (ProtocolException e) {
             e.printStackTrace();

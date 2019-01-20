@@ -30,6 +30,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -90,8 +96,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
-
-
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if (marker.getTag() != null) {
+                    Intent intent = new Intent(MapsActivity.this, UpdateLocationWeatherActivity.class);
+                    intent.putExtra("JSONString", marker.getTag().toString());
+                    startActivity(intent);
+                }
+                return false;
+            }
+        });
     }
 
 
@@ -138,7 +153,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Toast.makeText(MapsActivity.this, "Fetching location, please wait and try again", Toast.LENGTH_SHORT).show();
                     }
                     new GetConditions().execute();
-
                 }
             });
         } else {
@@ -189,37 +203,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 JSONArray jsonArray = new JSONArray(jsonString);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    String weatherCondition = jsonObject.getString("condition");
-                    int drawable = 0;
-                    if (weatherCondition.equals("clear-day")) {
-                        drawable = R.drawable.clear_day;
-                    } else if (weatherCondition.equals("clear-night")) {
-                        drawable = R.drawable.clear_night;
-                    } else if (weatherCondition.equals("rain")) {
-                        drawable = R.drawable.rain;
-                    } else if (weatherCondition.equals("snow")) {
-                        drawable = R.drawable.snow;
-                    } else if (weatherCondition.equals("sleet")) {
-                        drawable = R.drawable.sleet;
-                    } else if (weatherCondition.equals("wind")) {
-                        drawable = R.drawable.wind;
-                    } else if (weatherCondition.equals("fog")) {
-                        drawable = R.drawable.fog;
-                    } else if (weatherCondition.equals("cloudy")) {
-                        drawable = R.drawable.cloudy;
-                    } else if (weatherCondition.equals("partly-cloudy-day")) {
-                        drawable = R.drawable.partly_cloudy_day;
-                    } else if (weatherCondition.equals("partly-cloudy-night")) {
-                        drawable = R.drawable.partly_cloudy_night;
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm a z");
+                    Date dateOfCondition = df.parse(jsonObject.getString("time"));
+                    Calendar calendarOfCondition = Calendar.getInstance();
+                    calendarOfCondition.setTime(dateOfCondition);
+                    Calendar calendar = Calendar.getInstance();
+                    if (calendarOfCondition.get(Calendar.DAY_OF_YEAR) ==  calendar.get(Calendar.DAY_OF_YEAR) &&
+                            calendarOfCondition.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)) {
+                        if (calendarOfCondition.get(Calendar.HOUR_OF_DAY) == calendar.get(Calendar.HOUR_OF_DAY) ||
+                                calendarOfCondition.get(Calendar.HOUR_OF_DAY) == calendar.get(Calendar.HOUR_OF_DAY)-1) {
+                            String weatherCondition = jsonObject.getString("condition");
+                            int drawable = 0;
+                            if (weatherCondition.equals("clear-day")) {
+                                drawable = R.drawable.clear_day;
+                            } else if (weatherCondition.equals("clear-night")) {
+                                drawable = R.drawable.clear_night;
+                            } else if (weatherCondition.equals("rain")) {
+                                drawable = R.drawable.rain;
+                            } else if (weatherCondition.equals("snow")) {
+                                drawable = R.drawable.snow;
+                            } else if (weatherCondition.equals("sleet")) {
+                                drawable = R.drawable.sleet;
+                            } else if (weatherCondition.equals("wind")) {
+                                drawable = R.drawable.wind;
+                            } else if (weatherCondition.equals("fog")) {
+                                drawable = R.drawable.fog;
+                            } else if (weatherCondition.equals("cloudy")) {
+                                drawable = R.drawable.cloudy;
+                            } else if (weatherCondition.equals("partly-cloudy-day")) {
+                                drawable = R.drawable.partly_cloudy_day;
+                            } else if (weatherCondition.equals("partly-cloudy-night")) {
+                                drawable = R.drawable.partly_cloudy_night;
+                            }
+                            BitmapDrawable bitmapDrawable = (BitmapDrawable) getResources().getDrawable(drawable);
+                            Bitmap rawBitmap = bitmapDrawable.getBitmap();
+                            Bitmap resizedBitmap = Bitmap.createScaledBitmap(rawBitmap, 100, 100, false);
+                            Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(jsonObject.getDouble("latitude")
+                                    , jsonObject.getDouble("longitude"))).icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap)));
+                            marker.setTag(jsonObject);
+                        }
                     }
-                    BitmapDrawable bitmapDrawable = (BitmapDrawable) getResources().getDrawable(drawable);
-                    Bitmap rawBitmap = bitmapDrawable.getBitmap();
-                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(rawBitmap, 100, 100, false);
-                    Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(jsonObject.getDouble("latitude")
-                            , jsonObject.getDouble("longitude"))).icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap)));
-                    marker.setTag(jsonObject);
                 }
             } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
                 e.printStackTrace();
             }
         }

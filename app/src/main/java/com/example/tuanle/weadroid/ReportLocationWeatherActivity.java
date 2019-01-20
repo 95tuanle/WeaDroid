@@ -30,8 +30,8 @@ public class ReportLocationWeatherActivity extends AppCompatActivity {
         condition = new Condition();
         latitude = getIntent().getDoubleExtra("latitude", 0);
         longitude = getIntent().getDoubleExtra("longitude", 0);
-        latitudeText = findViewById(R.id.latitudeClinicC);
-        longitudeText = findViewById(R.id.longitudeClinicC);
+        latitudeText = findViewById(R.id.latitudeConditionC);
+        longitudeText = findViewById(R.id.longitudeConditionC);
         latitudeText.setText(latitude + "");
         longitudeText.setText(longitude + "");
         weatherCondition = "";
@@ -108,7 +108,6 @@ public class ReportLocationWeatherActivity extends AppCompatActivity {
             condition.condition = weatherCondition;
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm a z");
             condition.time = df.format(new Date());
-            System.out.println(condition.time);
             new PostCondition().execute();
         }
     }
