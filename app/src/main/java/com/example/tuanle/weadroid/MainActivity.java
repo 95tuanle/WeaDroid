@@ -4,8 +4,13 @@ import android.Manifest;
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.location.Location;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -42,8 +47,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String DARK_SKY_API_KEY = "5528c7901c45cba63baa891e648c897e";
     public static final String WEATHER_REPORT_API = "https://whereisrain.herokuapp.com/rains";
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
+    FloatingActionButton floatingActionButton;
     CityRepository cityRepository;
     ListView citiesList;
+    public boolean DISPLAYING_CELCIUS = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
         ForecastClient.create(configuration);
         cityRepository = new CityRepository(getApplicationContext());
         citiesList = findViewById(R.id.citiesList);
+        floatingActionButton = findViewById(R.id.fab);
+        floatingActionButton.setImageBitmap(textAsBitmap("°C", 40, Color.WHITE));
+
     }
 
     public void addCity(View view) {
@@ -67,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        reloadData();
+    }
+
+    public void reloadData() {
         cityRepository.getAllCities().observe(this, new Observer<List<City>>() {
             @Override
             public void onChanged(@Nullable final List<City> cities) {
@@ -109,7 +123,11 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<Forecast> forecastCall, Response<Forecast> response) {
                         if (response.isSuccessful()) {
                             Forecast forecast = response.body();
-                            text1.setText(forecast.getCurrently().getApparentTemperature().intValue() + "°F");
+                            if (DISPLAYING_CELCIUS) {
+                                text1.setText(toCelsius(forecast.getCurrently().getTemperature()) + "°C");
+                            } else {
+                                text1.setText(forecast.getCurrently().getTemperature().intValue() + "°F");
+                            }
                         }
                     }
                     @Override
@@ -140,6 +158,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private int toCelsius(Double temperature) {
+        return (int) (((temperature - 32)*5)/9);
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
@@ -162,8 +185,40 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
     public void toMap(View view) {
         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
         startActivity(intent);
     }
+
+
+
+    public void changeDisplayTemperature(View view) {
+        if (DISPLAYING_CELCIUS) {
+            DISPLAYING_CELCIUS = false;
+            floatingActionButton.setImageBitmap(textAsBitmap("°C", 40, Color.WHITE));
+        } else {
+            DISPLAYING_CELCIUS = true;
+            floatingActionButton.setImageBitmap(textAsBitmap("°F", 40, Color.WHITE));
+        }
+        reloadData();
+    }
+
+    //method to convert your text to image (StackOverFlow)
+    public static Bitmap textAsBitmap(String text, float textSize, int textColor) {
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setTextSize(textSize);
+        paint.setColor(textColor);
+        paint.setTextAlign(Paint.Align.LEFT);
+        float baseline = -paint.ascent(); // ascent() is negative
+        int width = (int) (paint.measureText(text) + 0.0f); // round
+        int height = (int) (baseline + paint.descent() + 0.0f);
+        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(image);
+        canvas.drawText(text, 0, baseline, paint);
+        return image;
+    }
+
 }

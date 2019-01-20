@@ -37,8 +37,6 @@
                 android:layout_height="wrap_content"
                 android:hint="Longitude of Condition" />
         </TableRow>
-
-
     </TableLayout>
     <RadioGroup
         android:id="@+id/radioGroup"
