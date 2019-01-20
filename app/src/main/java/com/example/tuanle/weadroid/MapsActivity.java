@@ -68,7 +68,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapsActivity.this);
         mMap.getUiSettings().setZoomControlsEnabled(true);
-
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
@@ -86,7 +85,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             requestLocationPermission();
         }
-
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {

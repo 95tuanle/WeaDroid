@@ -21,7 +21,7 @@
                 android:id="@+id/latitudeConditionC"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Latitude of Clinic" />
+                android:hint="Latitude of Condition" />
         </TableRow>
 
         <TableRow
@@ -35,7 +35,7 @@
                 android:id="@+id/longitudeConditionC"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Longitude of Clinic" />
+                android:hint="Longitude of Condition" />
         </TableRow>
 
 
