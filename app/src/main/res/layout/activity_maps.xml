@@ -38,7 +38,7 @@
         android:layout_marginBottom="33dp"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="addCurrentLocationWeather"
+        android:onClick="reportCurrentLocationWeather"
         android:src="@android:drawable/ic_menu_add"
         map:backgroundTint="@color/design_default_color_primary_dark" />
 

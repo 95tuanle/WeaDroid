@@ -1,9 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ReportLocationWeatherActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Latitude " />
+            <TextView
+                android:id="@+id/latitudeClinicC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Latitude of Clinic" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Longitude " />
+            <TextView
+                android:id="@+id/longitudeClinicC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Longitude of Clinic" />
+        </TableRow>
+
+
+    </TableLayout>
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="33dp"
+        android:layout_marginBottom="33dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <RadioButton
+            android:id="@+id/clearDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Clear Day"
+            android:textAlignment="viewStart"
+            android:onClick="onRadioButtonClicked"/>
+
+        <RadioButton
+            android:id="@+id/clearNight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Clear Night"
+            android:textAlignment="viewStart"
+            android:onClick="onRadioButtonClicked"/>
+
+        <RadioButton
+            android:id="@+id/rain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Rain"
+            android:textAlignment="viewStart"
+            android:onClick="onRadioButtonClicked"/>
+
+        <RadioButton
+            android:id="@+id/snow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Snow"
+            android:textAlignment="viewStart"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton
+            android:id="@+id/sleet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Sleet"
+            android:textAlignment="viewStart"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton
+            android:id="@+id/wind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Wind"
+            android:textAlignment="viewStart"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton
+            android:id="@+id/fog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Fog"
+            android:textAlignment="viewStart"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton
+            android:id="@+id/cloudy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cloudy"
+            android:textAlignment="viewStart"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton
+            android:id="@+id/partlyCloudyDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Partly Cloudy Day"
+            android:textAlignment="viewStart"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton
+            android:id="@+id/partlyCloudyNight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Partly Cloudy Night"
+            android:textAlignment="viewStart"
+            android:onClick="onRadioButtonClicked"/>
+    </RadioGroup>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onReportClicked"
+            android:text="Report" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onCancelClicked"
+            android:text="Cancel" />
+    </LinearLayout>
+
+</LinearLayout>
