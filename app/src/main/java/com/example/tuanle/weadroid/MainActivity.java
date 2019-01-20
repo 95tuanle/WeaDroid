@@ -2,7 +2,9 @@ package com.example.tuanle.weadroid;
 
 import android.Manifest;
 import android.arch.lifecycle.Observer;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -14,6 +16,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -26,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.zetterstrom.com.forecast.ForecastClient;
@@ -42,6 +48,8 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -50,6 +58,29 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String MUSIC_PATH = "/sdcard/Music";
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
+            musicService = binder.getService();
+            musicService.setSongs(songs);
+            serviceConnected = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceConnected = false;
+        }
+    };
+    private MusicService musicService;
+    private boolean serviceConnected = false;
+    private ArrayList<Song> songs;
+
+
+
+
+
     public static boolean DISPLAYING_CELSIUS = false;
     public static final int MAX_LIGHT = 40000;
     private static final String DARK_SKY_API_KEY = "5528c7901c45cba63baa891e648c897e";
@@ -74,6 +105,38 @@ public class MainActivity extends AppCompatActivity {
         if (lightSensor != null) {
             sensorManager.registerListener(LightSensorListener, lightSensor, SensorManager.SENSOR_DELAY_FASTEST);
         }
+
+
+        requestPermission();
+        File musicFolder = new File(MUSIC_PATH);
+
+        songs = new ArrayList<>();
+        int id = 0;
+        if (musicFolder.exists()) {
+            File[] files = musicFolder.listFiles();
+            for (File file:
+                    files) {
+                Song newSong = new Song(++id, file.getName(), file.getPath());
+                songs.add(newSong);
+            }
+        }
+        if (serviceConnected) {
+            musicService.setSongs(songs);
+            musicService.playSong(0);
+        }
+    }
+
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(MainActivity.this, MusicService.class);
+        bindService(intent, connection, this.BIND_AUTO_CREATE);
+        startService(intent);
     }
 
 
@@ -250,6 +313,7 @@ public class MainActivity extends AppCompatActivity {
             floatingActionButton.setImageBitmap(textAsBitmap("°F", 40, Color.WHITE));
         }
         reloadData();
+        musicService.playSong(0);
     }
 
     //method to convert your text to image (StackOverFlow)
@@ -267,5 +331,7 @@ public class MainActivity extends AppCompatActivity {
         canvas.drawText(text, 0, baseline, paint);
         return image;
     }
+
+
 
 }
